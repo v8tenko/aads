@@ -1,7 +1,7 @@
 #include "unordered_map.h"
 
 #include <functional>
-#include <optional>
+#include <algorithm>
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
 UnorderedMap<Key, Value, Hash, KeyEqual>::UnorderedMap()
@@ -20,11 +20,10 @@ void UnorderedMap<Key, Value, Hash, KeyEqual>::set(const Key &key, const Value &
     if (previousValueIterator == localBucket.end()) {
         localBucket.push_back({key, value});
 		    size_++;
+    } else {
+			previousValueIterator->second = value;
+		}
 
-        return;
-    }
-
-    previousValueIterator->second = value;
 
     float localFactor = static_cast<float>(size_) / buckets.size();
 
@@ -39,7 +38,7 @@ void UnorderedMap<Key, Value, Hash, KeyEqual>::refresh() {
     std::vector<std::vector<std::pair<Key, Value>>> nextBuckets(nextBucketsSize);
 
     for (const auto& localBucket : buckets) {
-        for (const auto pair : localBucket) {
+        for (const auto &pair : localBucket) {
             size_t hashed = hash(pair.first);
             size_t nextIndex = hashed % nextBucketsSize;
 
