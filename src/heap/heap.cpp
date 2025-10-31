@@ -1,6 +1,7 @@
 #include "heap.h"
 
 #include <iostream>
+#include <cmath>
 
 void Heap::push(int value) {
     values.push_back(value);
