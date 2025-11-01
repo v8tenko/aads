@@ -1,8 +1,9 @@
 name: Gemini AI Code Reviewer
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches-ignore:
+      - main
 
 permissions: write-all
 
@@ -10,13 +11,13 @@ jobs:
   gemini-code-review:
     runs-on: ubuntu-latest
     if: |
-      github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/gemini-review')
+      github.event.head_commit && 
+      github.ref != 'refs/heads/main'
     steps:
       - name: PR Info
         run: |
-          echo "Comment: ${{ github.event.comment.body }}"
-          echo "Issue Number: ${{ github.event.issue.number }}"
+          echo "Commit: ${{ github.event.head_commit.id }}"
+          echo "Branch: ${{ github.ref }}"
           echo "Repository: ${{ github.repository }}"
 
       - name: Checkout Repo
@@ -27,9 +28,9 @@ jobs:
       - name: Get PR Details
         id: pr
         run: |
-          PR_JSON=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }})
-          echo "head_sha=$(echo $PR_JSON | jq -r .head.sha)" >> $GITHUB_OUTPUT
-          echo "base_sha=$(echo $PR_JSON | jq -r .base.sha)" >> $GITHUB_OUTPUT
+          PR_JSON=$(gh api repos/${{ github.repository }}/pulls?head=${{ github.ref#refs/heads/ }})
+          echo "head_sha=$(echo $PR_JSON | jq -r '.[0].head.sha')" >> $GITHUB_OUTPUT
+          echo "base_sha=$(echo $PR_JSON | jq -r '.[0].base.sha')" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
