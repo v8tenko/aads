@@ -1,0 +1,21 @@
+name: Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tusgino/llm-code-reviewer@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: 'gemini-2.0-flash'
+
+          INPUT_EXCLUDE: '*.md,*.txt'
+          HUMAN_LANGUAGE: 'en'
+          
+          PRIMARY_MODEL: 'gemini'
