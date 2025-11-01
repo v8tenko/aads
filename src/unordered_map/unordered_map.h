@@ -10,8 +10,9 @@ struct UnorderedMap {
     UnorderedMap();
 
    public:
-    void set(const Key& key, const Value& value);
     const Value* get(const Key& key) const;
+    void set(const Key& key, Value value);
+    void remove(const Key& key);
 
     size_t size() const;
 
