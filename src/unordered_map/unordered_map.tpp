@@ -1,30 +1,29 @@
 #pragma once
 
-#include "unordered_map.h"
-
 #include <algorithm>
+
+#include "unordered_map.h"
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
 UnorderedMap<Key, Value, Hash, KeyEqual>::UnorderedMap()
     : buckets(16), hash(Hash()), equal(KeyEqual()), size_(0) {}
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
-void UnorderedMap<Key, Value, Hash, KeyEqual>::set(const Key &key, const Value &value) {
+void UnorderedMap<Key, Value, Hash, KeyEqual>::set(const Key& key, const Value& value) {
     size_t hashed = hash(key);
     size_t index = hashed % buckets.size();
 
     auto& localBucket = buckets[index];
-    auto previousValueIterator =
-        std::find_if(localBucket.begin(), localBucket.end(),
-                     [&key, this](std::pair<Key, Value> &entry) { return equal(entry.first, key); });
+    auto previousValueIterator = std::find_if(
+        localBucket.begin(), localBucket.end(),
+        [&key, this](std::pair<Key, Value>& entry) { return equal(entry.first, key); });
 
     if (previousValueIterator == localBucket.end()) {
         localBucket.push_back({key, value});
-		    size_++;
+        size_++;
     } else {
-			previousValueIterator->second = value;
-		}
-
+        previousValueIterator->second = value;
+    }
 
     float localFactor = static_cast<float>(size_) / buckets.size();
 
@@ -39,7 +38,7 @@ void UnorderedMap<Key, Value, Hash, KeyEqual>::refresh() {
     std::vector<std::vector<std::pair<Key, Value>>> nextBuckets(nextBucketsSize);
 
     for (const auto& localBucket : buckets) {
-        for (const auto &pair : localBucket) {
+        for (const auto& pair : localBucket) {
             size_t hashed = hash(pair.first);
             size_t nextIndex = hashed % nextBucketsSize;
 
@@ -51,16 +50,16 @@ void UnorderedMap<Key, Value, Hash, KeyEqual>::refresh() {
 }
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
-const Value* UnorderedMap<Key, Value, Hash, KeyEqual>::get(const Key &key) const {
+const Value* UnorderedMap<Key, Value, Hash, KeyEqual>::get(const Key& key) const {
     size_t hashed = hash(key);
     size_t index = hashed % buckets.size();
 
-    auto &localBucket = buckets[index];
+    auto& localBucket = buckets[index];
     auto valueIterator =
         std::find_if(localBucket.begin(), localBucket.end(),
                      [&key, this](std::pair<Key, Value> entry) { return equal(entry.first, key); });
-		
-		return valueIterator == localBucket.end() ? nullptr : &valueIterator->second;
+
+    return valueIterator == localBucket.end() ? nullptr : &valueIterator->second;
 }
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>

@@ -21,5 +21,4 @@ struct Heap {
     std::vector<Value> _values;
 };
 
-
 #include "heap.tpp"
