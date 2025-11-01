@@ -3,27 +3,28 @@
 
 #include <algorithm>
 #include <random>
+#include <functional>
 
 
 TEST(Heap, PushPopSingle) {
-	Heap h;
+	Heap<int> h;
 	h.push(42);
 
-	ASSERT_EQ(h.values.size(), 1);
-	EXPECT_EQ(h.pop(), 42);
-	EXPECT_TRUE(h.values.empty());
+	ASSERT_EQ(h.values().size(), 1);
+	EXPECT_EQ(*h.pop(), 42);
+	EXPECT_TRUE(h.values().empty());
 }
 
 TEST(Heap, PopsInAscendingOrder) {
-	Heap h;
+	Heap<int> h;
 	std::vector<int> input = {5, 3, 8, 1, 4, 7, 2, 6, 0, 9};
 	for (int v : input) {
 		 h.push(v);
 	}
 
 	std::vector<int> out;
-	while (!h.values.empty()) {
-		out.push_back(h.pop());
+	while (!h.values().empty()) {
+		out.push_back(*h.pop());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());
@@ -32,15 +33,15 @@ TEST(Heap, PopsInAscendingOrder) {
 }
 
 TEST(Heap, HandlesDuplicatesAndNegatives) {
-	Heap h;
+	Heap<int> h;
 	std::vector<int> input = {5, -1, 5, -1, 0};
 	for (int v : input) {
 		h.push(v);
 	}
 
 	std::vector<int> out;
-	while (!h.values.empty()) {
-		out.push_back(h.pop());
+	while (!h.values().empty()) {
+		out.push_back(*h.pop());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());
@@ -49,7 +50,7 @@ TEST(Heap, HandlesDuplicatesAndNegatives) {
 }
 
 TEST(Heap, LargeRandom) {
-	Heap h;
+	Heap<int> h;
 	const int N = 1000;
 	std::mt19937 rng(12345);
 	std::uniform_int_distribution<int> dist(-10000, 10000);
@@ -63,8 +64,8 @@ TEST(Heap, LargeRandom) {
 
 	std::vector<int> out;
 	out.reserve(N);
-	while (!h.values.empty()) {
-		out.push_back(h.pop());
+	while (!h.values().empty()) {
+		out.push_back(*h.pop());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());

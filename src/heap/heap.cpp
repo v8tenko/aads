@@ -3,23 +3,30 @@
 #include <iostream>
 #include <cmath>
 
-void Heap::push(int value) {
-    values.push_back(value);
-    bubble(values.size() - 1);
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::push(const Value &value) {
+    _values.push_back(value);
+    bubble(_values.size() - 1);
 }
 
-int Heap::pop() {
-    int min = values[0];
-    values[0] = values.back();
-    values.pop_back();
+template <typename Value, typename Compare>
+Value* Heap<Value, Compare>::pop() {
+    if (_values.empty()) {
+        return nullptr;
+    }
+
+    Value min = _values[0];
+    _values[0] = _values.back();
+    _values.pop_back();
 
     sink(0);
 
     return min;
 }
 
-void Heap::debug(int start = 0) {
-    int n = values.size() - start;
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::debug(int start) {
+    int n = _values.size() - start;
     if (n <= 0) {
         return;
     };
@@ -35,8 +42,8 @@ void Heap::debug(int start = 0) {
             std::cout << " ";
         }
 
-        for (int i = 0; i < nodesAtLevel && index < values.size(); i++, index++) {
-            std::cout << values[index];
+        for (int i = 0; i < nodesAtLevel && index < _values.size(); i++, index++) {
+            std::cout << _values[index];
 
             for (int s = 0; s < spacing * 2 + 1; ++s) {
                 std::cout << " ";
@@ -46,16 +53,17 @@ void Heap::debug(int start = 0) {
     }
 }
 
-void Heap::bubble(int index) {
-    int value = values[index];
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::bubble(int index) {
+    int value = _values[index];
     int nodeInProgressIndex = index;
 
     while (nodeInProgressIndex) {
         int parentIndex = (nodeInProgressIndex - 1) / 2;
-        int parent = values[parentIndex];
+        int parent = _values[parentIndex];
 
         if (parent >= value) {
-            std::swap(values[parentIndex], values[nodeInProgressIndex]);
+            std::swap(_values[parentIndex], _values[nodeInProgressIndex]);
             nodeInProgressIndex = parentIndex;
         } else {
             return;
@@ -63,29 +71,36 @@ void Heap::bubble(int index) {
     }
 }
 
-void Heap::sink(int index) {
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::sink(int index) {
     int nodeInProgressIndex = index;
-    int size = values.size();
+    int size = _values.size();
 
-    while (nodeInProgressIndex < values.size()) {
+    while (nodeInProgressIndex < _values.size()) {
         int leftIndex = nodeInProgressIndex * 2 + 1;
         int rightIndex = nodeInProgressIndex * 2 + 2;
 
         int targetNode = nodeInProgressIndex;
 
-        if (leftIndex < size && values[leftIndex] < values[targetNode]) {
+        if (leftIndex < size && _values[leftIndex] < _values[targetNode]) {
             targetNode = leftIndex;
         }
 
-        if (rightIndex < size && values[rightIndex] < values[targetNode]) {
+        if (rightIndex < size && _values[rightIndex] < _values[targetNode]) {
             targetNode = rightIndex;
         }
 
         if (targetNode != nodeInProgressIndex) {
-            std::swap(values[targetNode], values[nodeInProgressIndex]);
+            std::swap(_values[targetNode], _values[nodeInProgressIndex]);
             nodeInProgressIndex = targetNode;
         } else {
             break;
         }
     }
+}
+
+
+template <typename Value, typename Compare>
+const std::vector<Value>& Heap<Value, Compare>::values() {
+    return _values;
 }
