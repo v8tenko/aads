@@ -4,11 +4,12 @@
 #include <iostream>
 #include <optional>
 
+
 template <typename Value, typename Compare>
 Heap<Value, Compare>::Heap() : compare(Compare()) {}
 
 template <typename Value, typename Compare>
-void Heap<Value, Compare>::push(const Value& value) {
+void Heap<Value, Compare>::push(Value value) {
     _values.push_back(std::move(value));
     bubble(_values.size() - 1);
 }
@@ -30,14 +31,14 @@ std::optional<Value> Heap<Value, Compare>::pop() {
 
 template <typename Value, typename Compare>
 void Heap<Value, Compare>::bubble(int index) {
-    int value = _values[index];
-    int nodeInProgressIndex = index;
+    Value value = _values[index];
+    size_t nodeInProgressIndex = index;
 
     while (nodeInProgressIndex) {
         int parentIndex = (nodeInProgressIndex - 1) / 2;
         int parent = _values[parentIndex];
 
-        if (compare(parent, value)) {
+        if (compare(value, parent)) {
             std::swap(_values[parentIndex], _values[nodeInProgressIndex]);
             nodeInProgressIndex = parentIndex;
         } else {
@@ -48,14 +49,14 @@ void Heap<Value, Compare>::bubble(int index) {
 
 template <typename Value, typename Compare>
 void Heap<Value, Compare>::sink(int index) {
-    int nodeInProgressIndex = index;
-    int size = _values.size();
+    size_t nodeInProgressIndex = index;
+    size_t size = _values.size();
 
     while (nodeInProgressIndex < _values.size()) {
-        int leftIndex = nodeInProgressIndex * 2 + 1;
-        int rightIndex = nodeInProgressIndex * 2 + 2;
+        size_t leftIndex = nodeInProgressIndex * 2 + 1;
+        size_t rightIndex = nodeInProgressIndex * 2 + 2;
 
-        int targetNode = nodeInProgressIndex;
+        size_t targetNode = nodeInProgressIndex;
 
         if (leftIndex < size && compare(_values[leftIndex], _values[targetNode])) {
             targetNode = leftIndex;
@@ -90,8 +91,8 @@ void Heap<Value, Compare>::debug(int start) {
     int index = start;
 
     for (int level = 0; level < h; level++) {
-        int nodesAtLevel = pow(2, level);
-        int spacing = pow(2, h - level) - 1;
+        int nodesAtLevel = 1 << level;
+        int spacing = (1 << (h - level)) - 1;
 
         for (int s = 0; s < spacing; s++) {
             std::cout << " ";

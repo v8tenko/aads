@@ -8,7 +8,7 @@ template <typename Value, typename Compare = std::less<Value>>
 struct Heap {
    public:
     Heap();
-    void push(const Value& value);
+    void push(Value value);
     std::optional<Value> pop();
 
     void debug(int start = 0);
@@ -20,3 +20,6 @@ struct Heap {
     void sink(int index);
     std::vector<Value> _values;
 };
+
+
+#include "heap.tpp"

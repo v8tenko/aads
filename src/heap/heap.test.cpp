@@ -22,7 +22,7 @@ TEST(Heap, PopsInAscendingOrder) {
 
 	std::vector<int> out;
 	while (!h.values().empty()) {
-		out.push_back(*h.pop());
+		out.push_back(h.pop().value());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());
@@ -39,7 +39,7 @@ TEST(Heap, HandlesDuplicatesAndNegatives) {
 
 	std::vector<int> out;
 	while (!h.values().empty()) {
-		out.push_back(*h.pop());
+		out.push_back(h.pop().value());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());
@@ -63,7 +63,7 @@ TEST(Heap, LargeRandom) {
 	std::vector<int> out;
 	out.reserve(N);
 	while (!h.values().empty()) {
-		out.push_back(*h.pop());
+		out.push_back(h.pop().value());
 	}
 	std::vector<int> expected = input;
 	std::sort(expected.begin(), expected.end());
