@@ -3,8 +3,6 @@
 
 #include <algorithm>
 #include <random>
-#include <functional>
-
 
 TEST(Heap, PushPopSingle) {
 	Heap<int> h;

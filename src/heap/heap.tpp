@@ -1,27 +1,82 @@
 #include "heap.h"
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
+#include <optional>
 
 template <typename Value, typename Compare>
-void Heap<Value, Compare>::push(const Value &value) {
-    _values.push_back(value);
+Heap<Value, Compare>::Heap() : compare(Compare()) {}
+
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::push(const Value& value) {
+    _values.push_back(std::move(value));
     bubble(_values.size() - 1);
 }
 
 template <typename Value, typename Compare>
-Value* Heap<Value, Compare>::pop() {
+std::optional<Value> Heap<Value, Compare>::pop() {
     if (_values.empty()) {
-        return nullptr;
+        return std::nullopt;
     }
 
     Value min = _values[0];
-    _values[0] = _values.back();
+    _values[0] = std::move(_values.back());
     _values.pop_back();
 
     sink(0);
 
     return min;
+}
+
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::bubble(int index) {
+    int value = _values[index];
+    int nodeInProgressIndex = index;
+
+    while (nodeInProgressIndex) {
+        int parentIndex = (nodeInProgressIndex - 1) / 2;
+        int parent = _values[parentIndex];
+
+        if (compare(parent, value)) {
+            std::swap(_values[parentIndex], _values[nodeInProgressIndex]);
+            nodeInProgressIndex = parentIndex;
+        } else {
+            return;
+        }
+    }
+}
+
+template <typename Value, typename Compare>
+void Heap<Value, Compare>::sink(int index) {
+    int nodeInProgressIndex = index;
+    int size = _values.size();
+
+    while (nodeInProgressIndex < _values.size()) {
+        int leftIndex = nodeInProgressIndex * 2 + 1;
+        int rightIndex = nodeInProgressIndex * 2 + 2;
+
+        int targetNode = nodeInProgressIndex;
+
+        if (leftIndex < size && compare(_values[leftIndex], _values[targetNode])) {
+            targetNode = leftIndex;
+        }
+
+        if (rightIndex < size && compare(_values[rightIndex], _values[targetNode])) {
+            targetNode = rightIndex;
+        }
+
+        if (targetNode != nodeInProgressIndex) {
+            std::swap(_values[targetNode], _values[nodeInProgressIndex]);
+            nodeInProgressIndex = targetNode;
+        } else {
+            break;
+        }
+    }
+}
+
+template <typename Value, typename Compare>
+const std::vector<Value>& Heap<Value, Compare>::values() {
+    return _values;
 }
 
 template <typename Value, typename Compare>
@@ -51,56 +106,4 @@ void Heap<Value, Compare>::debug(int start) {
         }
         std::cout << std::endl;
     }
-}
-
-template <typename Value, typename Compare>
-void Heap<Value, Compare>::bubble(int index) {
-    int value = _values[index];
-    int nodeInProgressIndex = index;
-
-    while (nodeInProgressIndex) {
-        int parentIndex = (nodeInProgressIndex - 1) / 2;
-        int parent = _values[parentIndex];
-
-        if (parent >= value) {
-            std::swap(_values[parentIndex], _values[nodeInProgressIndex]);
-            nodeInProgressIndex = parentIndex;
-        } else {
-            return;
-        }
-    }
-}
-
-template <typename Value, typename Compare>
-void Heap<Value, Compare>::sink(int index) {
-    int nodeInProgressIndex = index;
-    int size = _values.size();
-
-    while (nodeInProgressIndex < _values.size()) {
-        int leftIndex = nodeInProgressIndex * 2 + 1;
-        int rightIndex = nodeInProgressIndex * 2 + 2;
-
-        int targetNode = nodeInProgressIndex;
-
-        if (leftIndex < size && _values[leftIndex] < _values[targetNode]) {
-            targetNode = leftIndex;
-        }
-
-        if (rightIndex < size && _values[rightIndex] < _values[targetNode]) {
-            targetNode = rightIndex;
-        }
-
-        if (targetNode != nodeInProgressIndex) {
-            std::swap(_values[targetNode], _values[nodeInProgressIndex]);
-            nodeInProgressIndex = targetNode;
-        } else {
-            break;
-        }
-    }
-}
-
-
-template <typename Value, typename Compare>
-const std::vector<Value>& Heap<Value, Compare>::values() {
-    return _values;
 }
