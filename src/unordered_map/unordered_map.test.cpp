@@ -174,3 +174,19 @@ TEST(UnorderedMap, RemoveNonExistingKeyDoesNothing) {
         EXPECT_EQ(*p, i * 10);
     }
 }
+
+TEST(UnorderedMap, RemoveWithCollisions) {
+    UnorderedMap<int, int, BadHash> m;
+
+    m.set(3, 30);
+    m.set(6, 60);
+    EXPECT_EQ(m.size(), 2u);
+
+    m.remove(3);
+    EXPECT_EQ(m.size(), 1u);
+    EXPECT_EQ(m.get(3), nullptr);
+
+    const int* p6 = m.get(6);
+    ASSERT_NE(p6, nullptr);
+    EXPECT_EQ(*p6, 60);
+}

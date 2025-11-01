@@ -1,7 +1,6 @@
 #pragma once
 
 #include <algorithm>
-#include <optional>
 
 #include "unordered_map.h"
 
@@ -10,7 +9,7 @@ UnorderedMap<Key, Value, Hash, KeyEqual>::UnorderedMap()
     : buckets(16), hash(Hash()), equal(KeyEqual()), size_(0) {}
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
-void UnorderedMap<Key, Value, Hash, KeyEqual>::set(Key key, Value value) {
+void UnorderedMap<Key, Value, Hash, KeyEqual>::set(const Key& key, Value value) {
     size_t hashed = hash(key);
     size_t index = hashed % buckets.size();
 
@@ -58,13 +57,13 @@ const Value* UnorderedMap<Key, Value, Hash, KeyEqual>::get(const Key& key) const
     auto& localBucket = buckets[index];
     auto valueIterator =
         std::find_if(localBucket.begin(), localBucket.end(),
-                     [&key, this](std::pair<Key, Value> entry) { return equal(entry.first, key); });
+                     [&key, this](const std::pair<Key, Value>& entry) { return equal(entry.first, key); });
 
     return valueIterator == localBucket.end() ? nullptr : &valueIterator->second;
 }
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
-void UnorderedMap<Key, Value, Hash, KeyEqual>::remove(Key key) {
+void UnorderedMap<Key, Value, Hash, KeyEqual>::remove(const Key& key) {
     size_t hashed = hash(key);
     size_t index = hashed % buckets.size();
 
@@ -72,7 +71,7 @@ void UnorderedMap<Key, Value, Hash, KeyEqual>::remove(Key key) {
 
     auto valueIterator =
         std::find_if(localBucket.begin(), localBucket.end(),
-                     [&key, this](std::pair<Key, Value> entry) { return equal(entry.first, key); });
+                     [&key, this](const std::pair<Key, Value>& entry) { return equal(entry.first, key); });
     
     if (valueIterator != localBucket.end()) {
         localBucket.erase(valueIterator);
