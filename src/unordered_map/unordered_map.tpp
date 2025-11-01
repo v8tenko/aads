@@ -1,6 +1,7 @@
+#pragma once
+
 #include "unordered_map.h"
 
-#include <functional>
 #include <algorithm>
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
