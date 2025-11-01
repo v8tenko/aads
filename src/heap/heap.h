@@ -1,14 +1,25 @@
 #pragma once
+
+#include <functional>
+#include <optional>
 #include <vector>
 
+template <typename Value, typename Compare = std::less<Value>>
 struct Heap {
    public:
-    std::vector<int> values;
-    void push(int value);
-    int pop();
-    void debug(int start);
+    Heap();
+    void push(Value value);
+    std::optional<Value> pop();
+
+    void debug(size_t start = 0);
+    const std::vector<Value>& values();
 
    private:
-    void bubble(int index);
-    void sink(int index);
+    Compare compare;
+    void bubble(size_t index);
+    void sink(size_t index);
+    std::vector<Value> _values;
 };
+
+
+#include "heap.tpp"
