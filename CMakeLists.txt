@@ -24,7 +24,7 @@ file(GLOB_RECURSE TEST_SOURCES src/*/*.test.cpp)
 foreach(TEST_SRC ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
     get_filename_component(SRC_DIR ${TEST_SRC} DIRECTORY)
-    file(GLOB SOURCES "${SRC_DIR}/*.(cpp)|(tpp)")
+    file(GLOB SOURCES "${SRC_DIR}/*.cpp" "${SRC_DIR}/*.tpp")
     list(REMOVE_ITEM SOURCES ${TEST_SRC})
 
     add_executable(${TEST_NAME} ${TEST_SRC} ${SOURCES})

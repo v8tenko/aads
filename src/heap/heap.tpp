@@ -1,3 +1,5 @@
+#pragma once
+
 #include "heap.h"
 
 #include <cmath>
@@ -30,15 +32,14 @@ std::optional<Value> Heap<Value, Compare>::pop() {
 }
 
 template <typename Value, typename Compare>
-void Heap<Value, Compare>::bubble(int index) {
+void Heap<Value, Compare>::bubble(size_t index) {
     Value value = _values[index];
     size_t nodeInProgressIndex = index;
 
     while (nodeInProgressIndex) {
         int parentIndex = (nodeInProgressIndex - 1) / 2;
-        int parent = _values[parentIndex];
 
-        if (compare(value, parent)) {
+        if (compare(value, _values[parentIndex])) {
             std::swap(_values[parentIndex], _values[nodeInProgressIndex]);
             nodeInProgressIndex = parentIndex;
         } else {
@@ -48,7 +49,7 @@ void Heap<Value, Compare>::bubble(int index) {
 }
 
 template <typename Value, typename Compare>
-void Heap<Value, Compare>::sink(int index) {
+void Heap<Value, Compare>::sink(size_t index) {
     size_t nodeInProgressIndex = index;
     size_t size = _values.size();
 
@@ -81,7 +82,7 @@ const std::vector<Value>& Heap<Value, Compare>::values() {
 }
 
 template <typename Value, typename Compare>
-void Heap<Value, Compare>::debug(int start) {
+void Heap<Value, Compare>::debug(size_t start) {
     int n = _values.size() - start;
     if (n <= 0) {
         return;
