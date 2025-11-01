@@ -28,7 +28,7 @@ jobs:
       - name: Get PR Details
         id: pr
         run: |
-          PR_JSON=$(gh api repos/${{ github.repository }}/pulls?head=${{ github.ref#refs/heads/ }})
+          PR_JSON=$(gh api repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:${{ github.ref_name }})
           echo "head_sha=$(echo $PR_JSON | jq -r '.[0].head.sha')" >> $GITHUB_OUTPUT
           echo "base_sha=$(echo $PR_JSON | jq -r '.[0].base.sha')" >> $GITHUB_OUTPUT
         env:
