@@ -139,3 +139,38 @@ TEST(UnorderedMap, AssignmentCopiesAllEntries) {
         EXPECT_EQ(*rv, i * 3);
     }
 }
+
+TEST(UnorderedMap, RemoveExistingKey) {
+    UnorderedMap<int, int> m;
+    m.set(10, 123);
+    m.set(20, 456);
+    EXPECT_EQ(m.size(), 2u);
+
+    m.remove(10);
+    EXPECT_EQ(m.size(), 1u);
+    EXPECT_EQ(m.get(10), nullptr);
+
+    const int* p20 = m.get(20);
+    ASSERT_NE(p20, nullptr);
+    EXPECT_EQ(*p20, 456);
+
+    m.remove(10);
+    EXPECT_EQ(m.size(), 1u);
+}
+
+TEST(UnorderedMap, RemoveNonExistingKeyDoesNothing) {
+    UnorderedMap<int, int> m;
+    for (int i = 1; i <= 3; ++i) {
+        m.set(i, i * 10);
+    }
+    EXPECT_EQ(m.size(), 3u);
+
+    m.remove(9999);
+    EXPECT_EQ(m.size(), 3u);
+
+    for (int i = 1; i <= 3; ++i) {
+        const int* p = m.get(i);
+        ASSERT_NE(p, nullptr);
+        EXPECT_EQ(*p, i * 10);
+    }
+}
